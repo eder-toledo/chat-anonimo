@@ -1,14 +1,14 @@
 let Model = {
     addUser: (id, nickname) => {
         const user = {
-            id,
-            nickname
+            id: id,
+            nickname: nickname
         };
 
-        window.sessionStorage.setItem('user', user);
+        window.sessionStorage.setItem('user', JSON.stringify(user));
     },
     getUser: () => {
-        const user = window.sessionStorage.getItem('user');
+        const user = JSON.parse(window.sessionStorage.getItem('user'));
         return user;
     }
 }

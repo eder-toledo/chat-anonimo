@@ -19,6 +19,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import UserModel from '../../models/user';
 
 const drawerWidth = 240;
 
@@ -62,6 +63,8 @@ function Page(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const user = UserModel.getUser();
+  console.log(user.nickname);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -71,7 +74,7 @@ function Page(props) {
     <div>
       <div className={classes.toolbar}>
         <Typography className={classes.spaced} variant="h6" display="block" align="center">
-          @Nickname
+          {user.nickname}
         </Typography>
       </div>
       <Divider />
