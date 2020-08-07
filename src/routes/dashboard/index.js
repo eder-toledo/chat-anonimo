@@ -21,6 +21,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import ModelUser from '../../models/user';
 import ListUsers from '../../components/ListUsers';
+import Settings from '../../components/Settings';
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
@@ -112,12 +113,14 @@ function Page(props) {
             <ListItemText primary="Lista de usuarios" />
           </ListItem>
         </Link>
-        <ListItem button>
-          <ListItemIcon>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Ajustes" />
-        </ListItem>
+        <Link to="/dashboard/settings" className={classes.links}>
+          <ListItem button>
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Ajustes" />
+          </ListItem>
+        </Link>
       </List>
       <Divider />
     </div>
@@ -180,6 +183,9 @@ function Page(props) {
           <Switch>
             <Route path="/dashboard/list-users">
               <ListUsers users={users} />
+            </Route>
+            <Route path="/dashboard/settings">
+              <Settings />
             </Route>
           </Switch>
         </main>
