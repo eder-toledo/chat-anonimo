@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import UserModel from '../../models/user';
 import {obtenerUUID} from '../../tools/generador-uuid';
-
+import { Redirect } from "react-router-dom";
 
 const Page = () => {
 
@@ -17,10 +17,13 @@ const Page = () => {
         UserModel.addUser(UUID, nickName);
     };
 
-    let changeNickName = function (e) {
+    const changeNickName = function (e) {
         nickName = e.target.value ;
     };
 
+    if(UserModel.getUser()){
+        return <Redirect to="/dashboard" />
+    }
     return (
         <div>
             <Box component="span" p={1} mx="auto">
