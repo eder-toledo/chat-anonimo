@@ -8,6 +8,13 @@ let Model = {
         window.sessionStorage.setItem('user', JSON.stringify(user));
         Model.saveUserinListUsers(user);
     },
+    editUser: (nickname) => {
+        let user = Model.getUser();
+        user.nickname = nickname;
+        let users = Model.getUsers().filter(e => e.id !== user.id);
+        Model.updateListUsers(users);
+        Model.addUser(user.id, user.nickname);
+    },
     getUser: () => {
         const user = JSON.parse(window.sessionStorage.getItem('user'));
         return user;
