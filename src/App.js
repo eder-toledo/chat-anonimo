@@ -32,8 +32,7 @@ class App extends Component {
             <Route path="/dashboard">
               <Dashboard />
             </Route>
-            <Route path="/chat">
-              <Chat />
+            <Route path="/chat/:id" component={Chat}>
             </Route>
           </Switch>
         </Router>

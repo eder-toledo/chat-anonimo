@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
@@ -11,10 +11,15 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import SendIcon from '@material-ui/icons/Send';
 import { makeStyles } from '@material-ui/core/styles';
+import Moment from 'react-moment';
+import 'moment/locale/es';
 
-const message = `Truncation should be conditionally applicable on this long line of text
-   as this is a much longer line than what the container can support. `;
+import ChatModel from '../../models/chat';
+import UserModel from '../../models/user';
+import MessageModel from '../../models/message';
 
+
+import { useBroadcastChannel } from '../../tools/hooks';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -23,68 +28,95 @@ const useStyles = makeStyles((theme) => ({
     },
     item: {
         margin: '5px 10px 20px 10px;',
+    },
+    paper: {
+        marginBottom: '80px'
     }
 }));
-const Page = () => {
+
+const Page = ({ match }) => {
+    const chat = ChatModel.getChat(match.params.id);
+    const broadcast = useBroadcastChannel(match.params.id);
+    const [msg, setMsg] = useState("");
+    const [messages, setMessages] = useState(chat.messages);
+
     const classes = useStyles();
 
+    const user = UserModel.getUser();
+    const uuidFriend = chat.users.find(user => user !== window.sessionStorage.getItem('uuid'));
+    const friend = (uuidFriend) ? UserModel.findUserinListUsers(uuidFriend) : { nickname: '' };
+
+    const handleBroadcast = useCallback(
+        e => {
+            setMessages([...messages, e.data]);
+        },
+        [messages]
+    );
+
+    useEffect(() => {
+        if (broadcast) {
+            broadcast.onmessage = handleBroadcast;
+        }
+    }, [broadcast, handleBroadcast]);
+
+    function handleSend() {
+        const tmpmsg = MessageModel.addMessageToChat(match.params.id, msg, user.nickname);
+        broadcast.postMessage(tmpmsg);
+        setMessages([...messages, tmpmsg]);
+        setMsg("");
+    }
+
+    function returnDashboard(){
+        window.location.href = "/dashboard";
+    }
+
     return (
+
+
         <div>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" aria-label="menu">
+                    <IconButton edge="start" color="inherit" aria-label="menu" onClick={returnDashboard}>
                         <ArrowBackIcon />
                     </IconButton>
                     <Typography variant="h6" align="center">
-                        Chat con @Nickname
-                </Typography>
+                        {(chat.category) ? "Chat " + chat.category : "Chat con: " + friend.nickname}
+                    </Typography>
                 </Toolbar>
             </AppBar>
             <Container maxWidth="sm">
-                <Paper elevation={3}>
+                <Paper elevation={3} className={classes.paper}>
                     <Grid
                         container
                         direction="row"
                         justify="center"
                         alignItems="flex-end"
                     >
-                        <Grid
-                            container
-                            direction="row"
-                            justify="flex-start"
-                            alignItems="flex-start"
-                            spacing={1}
-                            className={classes.item}
-                        >
-                            <Grid item>
-                                <Avatar>W</Avatar>
-                            </Grid>
-                            <Grid item xs>
-                                <Typography align="left">{message}</Typography>
-                            </Grid>
-                        </Grid>
-
-                        <Grid
-                            container
-                            direction="row-reverse"
-                            justify="flex-start"
-                            alignItems="flex-start"
-                            spacing={1}
-                            className={classes.item}
-                        >
-                            <Grid item>
-                                <Avatar>W</Avatar>
-                            </Grid>
-                            <Grid item xs>
-                                <Typography align="right">{message}</Typography>
-                            </Grid>
-                        </Grid>
+                        {
+                            messages.map((msg) => {
+                                return (<Grid
+                                    container
+                                    direction="row"
+                                    justify="flex-start"
+                                    alignItems="flex-start"
+                                    spacing={1}
+                                    className={classes.item}
+                                    key={msg.id}
+                                >
+                                    <Grid item>
+                                        <Avatar>{msg.user[0]}</Avatar>
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Typography align="left">{msg.text}</Typography>
+                                        <Typography align="left">
+                                            <Moment locale="de" fromNow >{msg.date}</Moment>
+                                            </Typography>
+                                    </Grid>
+                                </Grid>)
+                            })
+                        }
                     </Grid>
                 </Paper>
-
-
-
-
             </Container>
             <AppBar position="fixed" color="primary" className={classes.appBar}>
                 <Toolbar>
@@ -94,14 +126,17 @@ const Page = () => {
                         placeholder="Mensaje"
                         fullWidth
                         margin="normal"
+                        onChange={e => setMsg(e.target.value)}
+                        value={msg}
                     />
-                    <IconButton edge="start" color="inherit" aria-label="open drawer">
+                    <IconButton edge="start" color="inherit" aria-label="open drawer" onClick={handleSend}>
                         <SendIcon />
                     </IconButton>
                 </Toolbar>
             </AppBar>
         </div>
-    )
+    );
 }
 
+//export default withStyles(useStyles)(Page);
 export default Page;

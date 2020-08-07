@@ -20,9 +20,17 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import ModelUser from '../../models/user';
+import ModelChat from '../../models/chat';
 import ListUsers from '../../components/ListUsers';
-
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import GroupChats from '../../components/GroupChats';
+import PrivateChats from '../../components/PrivateChats';
+import Settings from '../../components/Settings';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -86,24 +94,30 @@ function Page(props) {
       </div>
       <Divider />
       <List>
-        <ListItem button>
-          <ListItemIcon>
-            <ForumIcon />
-          </ListItemIcon>
-          <ListItemText primary="Mis chats" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <ChatIcon />
-          </ListItemIcon>
-          <ListItemText primary="Chats privados" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <GroupAddIcon />
-          </ListItemIcon>
-          <ListItemText primary="Chats grupales" />
-        </ListItem>
+        <Link to="/dashboard" className={classes.links}>
+          <ListItem button>
+            <ListItemIcon>
+              <ForumIcon />
+            </ListItemIcon>
+            <ListItemText primary="Mis chats" />
+          </ListItem>
+        </Link>
+        <Link to="/dashboard/chats-privados" className={classes.links}>
+          <ListItem button>
+            <ListItemIcon>
+              <ChatIcon />
+            </ListItemIcon>
+            <ListItemText primary="Chats privados" />
+          </ListItem>
+        </Link>
+        <Link to="/dashboard/chats-grupales" className={classes.links}>
+          <ListItem button>
+            <ListItemIcon>
+              <GroupAddIcon />
+            </ListItemIcon>
+            <ListItemText primary="Chats grupales" />
+          </ListItem>
+        </Link>
         <Link to="/dashboard/list-users" className={classes.links}>
           <ListItem button>
             <ListItemIcon>
@@ -112,12 +126,14 @@ function Page(props) {
             <ListItemText primary="Lista de usuarios" />
           </ListItem>
         </Link>
-        <ListItem button>
-          <ListItemIcon>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Ajustes" />
-        </ListItem>
+        <Link to="/dashboard/settings" className={classes.links}>
+          <ListItem button>
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Ajustes" />
+          </ListItem>
+        </Link>
       </List>
       <Divider />
     </div>
@@ -178,8 +194,20 @@ function Page(props) {
         <main className={classes.content}>
           <div className={classes.toolbar} />
           <Switch>
+            <Route exact path="/dashboard">
+              <GroupChats chats={ModelChat.findChatsOfUser(user.id, 'grupal')} />
+            </Route>
+            <Route path="/dashboard/chats-privados">
+              <PrivateChats chats={ModelChat.findChatsOfUser(user.id)} />
+            </Route>
+            <Route path="/dashboard/chats-grupales">
+              <GroupChats chats={ModelChat.findAllGroupChats()} />
+            </Route>
             <Route path="/dashboard/list-users">
               <ListUsers users={users} />
+            </Route>
+            <Route path="/dashboard/settings">
+              <Settings />
             </Route>
           </Switch>
         </main>

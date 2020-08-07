@@ -1,12 +1,18 @@
-let Model = {
+const Model = {
     addUser: (id, nickname) => {
         const user = {
             id: id,
             nickname: nickname
         };
-
         window.sessionStorage.setItem('user', JSON.stringify(user));
         Model.saveUserinListUsers(user);
+    },
+    editUser: (nickname) => {
+        let user = Model.getUser();
+        user.nickname = nickname;
+        let users = Model.getUsers().filter(e => e.id !== user.id);
+        Model.updateListUsers(users);
+        Model.addUser(user.id, user.nickname);
     },
     getUser: () => {
         const user = JSON.parse(window.sessionStorage.getItem('user'));
@@ -22,6 +28,12 @@ let Model = {
         users.push(user);
         Model.updateListUsers(users);
         return true;
+    },
+    findUserinListUsers: (uuid) => {
+        const users = (Model.getUsers()) ? Model.getUsers() : [];
+        const resultado = users.find( user => user.id === uuid );
+
+        return resultado;
     },
     updateListUsers: (users) => {
         window.localStorage.setItem('users', JSON.stringify(users));
