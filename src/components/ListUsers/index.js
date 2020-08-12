@@ -22,13 +22,13 @@ const ListUsers = (props) => {
             <Divider />
             <List>
                 {
+
                     props.users.map((user) => {
                         function onClick(idFriend) {
                             const emiter = ModelUser.getUser();
                             const idChat = ModelChat.findChat(idFriend, emiter.id);
                             console.log(idChat);
                             if (idChat) {
-                                //history.push("/chat/" + idChat);
                                 window.location.href="/chat/"+idChat;
                                 
                                 return;
@@ -37,7 +37,6 @@ const ListUsers = (props) => {
                             const uuidChat = ModelChat.addChat('unoauno');
                             ModelChat.addUserToChat(uuidChat, emiter.id);
                             ModelChat.addUserToChat(uuidChat, user.id);
-                            //history.push("/chat/" + uuidChat);
                             window.location.href="/chat/"+uuidChat;
                         };
 

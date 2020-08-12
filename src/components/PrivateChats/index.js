@@ -15,6 +15,7 @@ const PrivateChats = (props) => {
             <Divider />
             <List>
                 {
+                    (props.chats) ?
                     props.chats.map((chat) => {
                         function onClick(idChat) {
                             window.location.href = "/chat/" + idChat;
@@ -30,7 +31,8 @@ const PrivateChats = (props) => {
                                 <ListItemText primary={chat.category} secondary={(chat.messages) ? 'Mensaje(s): ' + chat.messages.length : 'Mensajes: 0'} />
                             </ListItem>
                         );
-                    })
+                    }) :
+                    <h3>No hay chats disponibles</h3>
                 }
             </List>
         </div>

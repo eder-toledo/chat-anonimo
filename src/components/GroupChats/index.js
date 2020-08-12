@@ -19,6 +19,7 @@ const GroupChats = (props) => {
             <Divider />
             <List>
                 {
+                    (props.chats) ?
                     props.chats.map((chat) => {
                         function onClick(idChat) {
 
@@ -37,7 +38,8 @@ const GroupChats = (props) => {
                                 <ListItemText primary={chat.category} secondary={(chat.users) ? 'Usuarios: ' + chat.users.length : 'Usuarios: 0'} />
                             </ListItem>
                         );
-                    })
+                    }) :
+                    <h3>No hay chats disponibles</h3>
                 }
             </List>
         </div>

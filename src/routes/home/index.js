@@ -13,8 +13,8 @@ const Page = () => {
     const UUID = obtenerUUID();
 
     const onClick = () => {
-        console.log(UUID + nickName);
         UserModel.addUser(UUID, nickName);
+        window.location.href = '/dashboard';
     };
 
     const changeNickName = function (e) {
