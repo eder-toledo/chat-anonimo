@@ -10,6 +10,7 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import SendIcon from '@material-ui/icons/Send';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { makeStyles } from '@material-ui/core/styles';
 import Moment from 'react-moment';
 import 'moment/locale/es';
@@ -66,8 +67,13 @@ const Page = ({ match }) => {
         setMsg("");
     }
 
-    function returnDashboard(){
+    function returnDashboard() {
         window.location.href = "/dashboard";
+    }
+
+    function hiddenMessage(idMessage) {
+        const messages = MessageModel.hiddenMessage(match.params.id, idMessage);
+        setMessages(messages);
     }
 
     return (
@@ -94,6 +100,37 @@ const Page = ({ match }) => {
                     >
                         {
                             messages.map((msg) => {
+                                if (msg.user === user.nickname && msg.hidden === true) {
+                                    return '';
+                                }
+
+                                if (msg.user === user.nickname) {
+                                    return (<Grid
+                                        container
+                                        direction="row"
+                                        justify="flex-start"
+                                        alignItems="flex-start"
+                                        spacing={1}
+                                        className={classes.item}
+                                        key={msg.id}
+                                    >
+                                        <Grid item>
+                                            <Avatar>{msg.user[0]}</Avatar>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <Typography align="left">{msg.text}</Typography>
+                                            <Typography align="left">
+                                                <Moment locale="de" fromNow >{msg.date}</Moment>
+                                            </Typography>
+                                        </Grid>
+                                        <Grid>
+                                            <IconButton aria-label="delete" onClick={() => hiddenMessage(msg.id)}>
+                                                <VisibilityOffIcon />
+                                            </IconButton>
+                                        </Grid>
+                                    </Grid>)
+                                }
+
                                 return (<Grid
                                     container
                                     direction="row"
@@ -110,7 +147,7 @@ const Page = ({ match }) => {
                                         <Typography align="left">{msg.text}</Typography>
                                         <Typography align="left">
                                             <Moment locale="de" fromNow >{msg.date}</Moment>
-                                            </Typography>
+                                        </Typography>
                                     </Grid>
                                 </Grid>)
                             })

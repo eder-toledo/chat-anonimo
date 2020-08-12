@@ -20,8 +20,16 @@ let Model = {
 
         return tmpmessage;
     },
-    ocultMessage: (uuidMessage) => {
+    hiddenMessage: (uuidChat, uuidMessage) => {
+        let chat = ChatModel.getChat(uuidChat);
+        const messages = (chat.messages) ? chat.messages : [];
+        const index = messages.findIndex( msg => msg.id === uuidMessage );
 
+        chat.messages[index].hidden = true;
+
+        ChatModel.updateChat(chat);
+
+        return chat.messages;
     }
 };
 
